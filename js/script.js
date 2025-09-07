@@ -70,17 +70,41 @@ function filterProducts(category) {
     console.log(`Filtered by category: ${category}, visible products: ${visibleIndex}`);
 }
 
-// Smooth scrolling for anchor links with GSAP-like functionality
+// Smooth scrolling mejorado con easing personalizado
+function smoothScrollTo(targetPosition, duration = 1000) {
+    const startPosition = window.pageYOffset;
+    const distance = targetPosition - startPosition;
+    let startTime = null;
+    
+    // Función de easing (easeInOutCubic)
+    function easeInOutCubic(t) {
+        return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+    }
+    
+    function animation(currentTime) {
+        if (startTime === null) startTime = currentTime;
+        const timeElapsed = currentTime - startTime;
+        const progress = Math.min(timeElapsed / duration, 1);
+        const ease = easeInOutCubic(progress);
+        
+        window.scrollTo(0, startPosition + distance * ease);
+        
+        if (timeElapsed < duration) {
+            requestAnimationFrame(animation);
+        }
+    }
+    
+    requestAnimationFrame(animation);
+}
+
+// Smooth scrolling para enlaces de ancla
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
         const targetId = this.getAttribute('href');
         
         if (targetId === '#') {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+            smoothScrollTo(0, 800);
             return;
         }
         
@@ -89,10 +113,8 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             const headerHeight = document.querySelector('.header').offsetHeight;
             const targetPosition = target.offsetTop - headerHeight - 20;
             
-            window.scrollTo({
-                top: targetPosition,
-                behavior: 'smooth'
-            });
+            // Usar scroll personalizado para mejor control
+            smoothScrollTo(targetPosition, 1200);
         }
     });
 });

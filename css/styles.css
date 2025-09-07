@@ -8,6 +8,12 @@
     box-sizing: border-box;
 }
 
+/* Smooth scrolling nativo */
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 100px; /* Compensa la altura del header fijo */
+}
+
 :root {
     --primary-color: #d72b32;
     --secondary-color: #D84040;
