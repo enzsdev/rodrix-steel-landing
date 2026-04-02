@@ -27,7 +27,11 @@ html {
     --whatsapp-color: #25D366;
     --shadow: 0 4px 20px rgba(0,0,0,0.1);
     --border-radius: 12px;
-    --transition: all 0.3s ease;
+    --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 body {
@@ -51,7 +55,8 @@ body {
     width: 100%;
     top: 0;
     z-index: 1000;
-    transition: var(--transition);
+    transition: background 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .navbar {
@@ -87,7 +92,7 @@ body {
     text-decoration: none;
     color: var(--white);
     font-weight: 600;
-    transition: var(--transition);
+    transition: color 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
 }
 
@@ -105,9 +110,10 @@ body {
     width: 0;
     height: 2px;
     bottom: -5px;
-    left: 0;
+    left: 50%;
+    transform: translateX(-50%);
     background-color: var(--primary-color);
-    transition: var(--transition);
+    transition: width 0.4s var(--ease-out-expo);
 }
 
 .nav-link:hover::after,
@@ -198,11 +204,16 @@ body {
     border-radius: var(--border-radius);
     font-weight: 700;
     text-align: center;
-    transition: var(--transition);
+    transition: transform 0.4s var(--ease-out-back),
+                background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     border: 2px solid transparent;
     cursor: pointer;
     font-size: 1rem;
     text-transform: uppercase;
+    will-change: transform;
 }
 
 .btn-whatsapp {
@@ -212,8 +223,8 @@ body {
 
 .btn-whatsapp:hover {
     background: #128C7E;
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.3);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 12px 30px rgba(37, 211, 102, 0.35);
 }
 
 .btn-large {
@@ -230,7 +241,8 @@ body {
 .btn-secondary:hover {
     background: var(--white);
     color: var(--primary-color);
-    transform: translateY(-3px);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 10px 25px rgba(255, 255, 255, 0.2);
 }
 
 .btn-cart {
@@ -242,7 +254,8 @@ body {
 
 .btn-cart:hover {
     background: var(--secondary-color);
-    transform: translateY(-2px);
+    transform: translateY(-3px) scale(1.01);
+    box-shadow: 0 8px 20px rgba(215, 43, 50, 0.3);
 }
 
 .hero-image {
@@ -256,6 +269,12 @@ body {
     max-width: 500px;
     height: auto;
     filter: drop-shadow(0 10px 30px rgba(0,0,0,0.2));
+    animation: heroFloat 4s ease-in-out infinite;
+}
+
+@keyframes heroFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
 }
 
 /* Section Headers */
@@ -299,7 +318,10 @@ body {
     border: 2px solid var(--primary-color);
     border-radius: 50px;
     cursor: pointer;
-    transition: var(--transition);
+    transition: transform 0.35s var(--ease-out-back),
+                background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     font-weight: 600;
     text-transform: uppercase;
 }
@@ -308,7 +330,8 @@ body {
 .category-btn:hover {
     background: var(--primary-color);
     color: var(--white);
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(215, 43, 50, 0.3);
 }
 
 .products-grid {
@@ -323,13 +346,15 @@ body {
     box-shadow: var(--shadow);
     padding: 2rem;
     text-align: center;
-    transition: var(--transition);
+    transition: transform 0.5s var(--ease-out-expo),
+                box-shadow 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     overflow: hidden;
+    will-change: transform;
 }
 
 .product-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    transform: translateY(-10px) scale(1.01);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.12);
 }
 
 .product-image {
@@ -347,6 +372,11 @@ body {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
+    transition: transform 0.5s var(--ease-out-expo);
+}
+
+.product-card:hover .product-image img {
+    transform: scale(1.08);
 }
 
 .product-info h3 {
@@ -391,13 +421,19 @@ body {
     border-radius: var(--border-radius);
     padding: 2rem;
     text-align: center;
-    transition: var(--transition);
+    transition: transform 0.5s var(--ease-out-expo),
+                background 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                border-color 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     backdrop-filter: blur(10px);
+    will-change: transform;
 }
 
 .service-card:hover {
-    background: rgba(255,255,255,0.15);
-    transform: translateY(-5px);
+    background: rgba(255,255,255,0.18);
+    transform: translateY(-8px) scale(1.01);
+    border-color: rgba(255,255,255,0.35);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
 }
 
 .service-image {
@@ -519,9 +555,10 @@ body {
 .brands-carousel {
     display: flex;
     gap: 2rem;
-    animation: scroll 25s linear infinite;
+    animation: scroll 35s linear infinite;
     width: max-content;
     overflow: hidden;
+    will-change: transform;
 }
 
 .brand-item {
@@ -533,12 +570,13 @@ body {
     height: 120px;
     object-fit: contain;
     filter: grayscale(100%);
-    transition: var(--transition);
+    transition: filter 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.5s var(--ease-out-expo);
 }
 
 .brand-item:hover img {
     filter: grayscale(0%);
-    transform: scale(1.1);
+    transform: scale(1.12);
 }
 
 @keyframes scroll {
@@ -640,22 +678,24 @@ body {
     text-decoration: none;
     box-shadow: 0 6px 20px rgba(37, 211, 102, 0.3);
     z-index: 1000;
-    transition: var(--transition);
-    animation: pulse 2s infinite;
+    transition: transform 0.4s var(--ease-out-back),
+                background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: pulse 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 .whatsapp-float:hover {
-    transform: scale(1.15);
+    transform: scale(1.15) rotate(10deg);
     background: #128C7E;
-    box-shadow: 0 8px 30px rgba(37, 211, 102, 0.5);
+    box-shadow: 0 10px 35px rgba(37, 211, 102, 0.5);
 }
 
 @keyframes pulse {
     0% {
-        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7);
+        box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.6);
     }
-    70% {
-        box-shadow: 0 0 0 15px rgba(37, 211, 102, 0);
+    50% {
+        box-shadow: 0 0 0 18px rgba(37, 211, 102, 0);
     }
     100% {
         box-shadow: 0 0 0 0 rgba(37, 211, 102, 0);
@@ -755,14 +795,16 @@ body {
     color: var(--white);
     text-decoration: none;
     border-radius: 50%;
-    transition: var(--transition);
+    transition: transform 0.4s var(--ease-out-back),
+                background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     font-size: 1.2rem;
 }
 
 .social-links a:hover {
     background: var(--secondary-color);
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(215, 43, 50, 0.3);
+    transform: translateY(-5px) scale(1.1);
+    box-shadow: 0 10px 25px rgba(215, 43, 50, 0.35);
 }
 
 .footer-bottom {
@@ -783,7 +825,7 @@ body {
         background-color: var(--quaternary-color);
         width: 100%;
         text-align: center;
-        transition: 0.3s;
+        transition: left 0.5s var(--ease-out-expo), opacity 0.4s ease;
         box-shadow: var(--shadow);
         gap: 0;
         padding: 2rem 0;
@@ -914,14 +956,16 @@ body {
 /* Animation for product filtering */
 .product-card {
     opacity: 1;
-    transform: scale(1);
-    transition: all 0.4s ease;
+    transform: scale(1) translateY(0);
+    transition: transform 0.5s var(--ease-out-expo),
+                box-shadow 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity 0.45s cubic-bezier(0.4, 0, 0.2, 1);
     display: block;
 }
 
 .product-card.hidden {
     opacity: 0;
-    transform: scale(0.9);
+    transform: scale(0.92) translateY(10px);
     pointer-events: none;
     display: none !important;
 }
@@ -939,53 +983,56 @@ section {
 @keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(40px);
+        transform: translateY(35px) scale(0.97);
     }
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
 }
 
 .fade-in {
-    animation: fadeInUp 0.8s ease;
+    animation: fadeInUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: var(--stagger-delay, 0ms);
 }
 
 /* Header scroll effect */
 .header.scrolled {
     background: rgba(29, 22, 22, 0.95);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.15);
 }
 
 /* Additional animations */
 @keyframes slideInLeft {
     from {
         opacity: 0;
-        transform: translateX(-50px);
+        transform: translateX(-60px) scale(0.96);
     }
     to {
         opacity: 1;
-        transform: translateX(0);
+        transform: translateX(0) scale(1);
     }
 }
 
 @keyframes slideInRight {
     from {
         opacity: 0;
-        transform: translateX(50px);
+        transform: translateX(60px) scale(0.96);
     }
     to {
         opacity: 1;
-        transform: translateX(0);
+        transform: translateX(0) scale(1);
     }
 }
 
 .slide-in-left {
-    animation: slideInLeft 0.8s ease;
+    animation: slideInLeft 1s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .slide-in-right {
-    animation: slideInRight 0.8s ease;
+    animation: slideInRight 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation-delay: 0.15s;
 }
 
 /* Hover effects */
@@ -1003,11 +1050,36 @@ section {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transition: var(--transition);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+    transition: left 0.7s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .service-card:hover::before,
 .product-card:hover::before {
     left: 100%;
+}
+
+/* Scroll reveal initial state */
+.scroll-reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.scroll-reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    .hero-img { animation: none; }
+    .brands-carousel { animation: none; }
+    .whatsapp-float { animation: none; }
 }

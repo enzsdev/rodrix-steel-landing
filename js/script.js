@@ -54,11 +54,14 @@ function filterProducts(category) {
         product.classList.remove('hidden', 'fade-in');
         
         if (category === 'all' || productCategory === category) {
-            // Show the product
+            // Show the product with staggered animation
             product.style.display = 'block';
+            product.style.setProperty('--stagger-delay', `${visibleIndex * 80}ms`);
+            // Force reflow before adding animation class
+            void product.offsetWidth;
             setTimeout(() => {
                 product.classList.add('fade-in');
-            }, visibleIndex * 100); // Stagger animation
+            }, 10);
             visibleIndex++;
         } else {
             // Hide the product
@@ -66,7 +69,6 @@ function filterProducts(category) {
         }
     });
     
-    // Debug log
     console.log(`Filtered by category: ${category}, visible products: ${visibleIndex}`);
 }
 
@@ -337,21 +339,37 @@ document.head.appendChild(notificationStyles);
 
 // Intersection Observer for animations
 const observerOptions = {
-    threshold: 0.15,
-    rootMargin: '0px 0px -80px 0px'
+    threshold: 0.12,
+    rootMargin: '0px 0px -60px 0px'
 };
 
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
+            // Add stagger delay based on sibling index
+            const parent = entry.target.parentElement;
+            if (parent) {
+                const siblings = Array.from(parent.children).filter(c => c.classList.contains('product-card') || c.classList.contains('service-card'));
+                const idx = siblings.indexOf(entry.target);
+                if (idx >= 0) {
+                    entry.target.style.setProperty('--stagger-delay', `${idx * 100}ms`);
+                }
+            }
             entry.target.classList.add('fade-in');
             
-            // Special animations for different elements
+            // Special animations for hero elements
             if (entry.target.classList.contains('hero-content')) {
                 entry.target.classList.add('slide-in-left');
             } else if (entry.target.classList.contains('hero-image')) {
                 entry.target.classList.add('slide-in-right');
             }
+            
+            // Scroll-reveal elements
+            if (entry.target.classList.contains('scroll-reveal')) {
+                entry.target.classList.add('revealed');
+            }
+            
+            observer.unobserve(entry.target);
         }
     });
 }, observerOptions);
@@ -428,16 +446,20 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 100);
 
     // Observe elements for animation
-    document.querySelectorAll('.product-card, .service-card, .hero-content, .hero-image, .about-text, .about-image').forEach(element => {
+    document.querySelectorAll('.product-card, .service-card, .hero-content, .hero-image, .about-text, .about-image, .section-header, .scroll-reveal, .quote-image, .contact-content, .brands-section, .location-section, .features').forEach((element, index) => {
+        // Set initial state for scroll-reveal items
+        if (!element.classList.contains('hero-content') && !element.classList.contains('hero-image')) {
+            element.classList.add('scroll-reveal');
+        }
         observer.observe(element);
     });
 
     // Enhance WhatsApp links
     enhanceWhatsAppLinks();
 
-    // Add loading class to body
+    // Smooth page load fade
     document.body.style.opacity = '0';
-    document.body.style.transition = 'opacity 0.5s ease';
+    document.body.style.transition = 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
     
     window.addEventListener('load', () => {
         document.body.style.opacity = '1';
@@ -496,16 +518,18 @@ function searchProducts(searchTerm) {
     const products = document.querySelectorAll('.product-card');
     let visibleCount = 0;
     
-    products.forEach(product => {
+    products.forEach((product, i) => {
         const productName = product.querySelector('h3').textContent.toLowerCase();
         const productDesc = product.querySelector('p').textContent.toLowerCase();
         
         if (productName.includes(searchTerm.toLowerCase()) || 
             productDesc.includes(searchTerm.toLowerCase())) {
             product.classList.remove('hidden');
+            product.style.setProperty('--stagger-delay', `${visibleCount * 80}ms`);
+            void product.offsetWidth;
             setTimeout(() => {
                 product.classList.add('fade-in');
-            }, visibleCount * 100);
+            }, 10);
             visibleCount++;
         } else {
             product.classList.add('hidden');
