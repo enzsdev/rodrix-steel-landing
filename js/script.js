@@ -73,21 +73,20 @@ function filterProducts(category) {
 }
 
 // Smooth scrolling mejorado con easing personalizado
-function smoothScrollTo(targetPosition, duration = 1000) {
+function smoothScrollTo(targetPosition, duration = 500) {
     const startPosition = window.pageYOffset;
     const distance = targetPosition - startPosition;
     let startTime = null;
     
-    // Función de easing (easeInOutCubic)
-    function easeInOutCubic(t) {
-        return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+    function easeOutQuart(t) {
+        return 1 - Math.pow(1 - t, 4);
     }
     
     function animation(currentTime) {
         if (startTime === null) startTime = currentTime;
         const timeElapsed = currentTime - startTime;
         const progress = Math.min(timeElapsed / duration, 1);
-        const ease = easeInOutCubic(progress);
+        const ease = easeOutQuart(progress);
         
         window.scrollTo(0, startPosition + distance * ease);
         
@@ -115,8 +114,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             const headerHeight = document.querySelector('.header').offsetHeight;
             const targetPosition = target.offsetTop - headerHeight - 20;
             
-            // Usar scroll personalizado para mejor control
-            smoothScrollTo(targetPosition, 1200);
+            smoothScrollTo(targetPosition, 550);
         }
     });
 });
@@ -374,22 +372,18 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
-// Enhanced Button Interactions
+// Enhanced Button Interactions — no delay, ripple is visual only
 document.addEventListener('click', (e) => {
-    if (e.target.closest('.btn-cart')) {
-        e.preventDefault();
-        const productCard = e.target.closest('.product-card');
-        const productName = productCard.querySelector('h3').textContent;
-        
-        // Create ripple effect
-        const btn = e.target.closest('.btn-cart');
+    const btn = e.target.closest('.btn-cart');
+    if (btn) {
+        // Create ripple effect (non-blocking)
         const ripple = document.createElement('span');
         ripple.style.cssText = `
             position: absolute;
             background: rgba(255,255,255,0.6);
             border-radius: 50%;
             transform: scale(0);
-            animation: ripple 0.6s linear;
+            animation: ripple 0.5s linear;
             left: ${e.offsetX}px;
             top: ${e.offsetY}px;
             width: 20px;
@@ -398,20 +392,10 @@ document.addEventListener('click', (e) => {
             margin-top: -10px;
             pointer-events: none;
         `;
-        
         btn.style.position = 'relative';
         btn.appendChild(ripple);
-        
-        setTimeout(() => {
-            ripple.remove();
-        }, 600);
-        
-        // Navigate to WhatsApp after animation
-        setTimeout(() => {
-            window.open(e.target.closest('.btn-cart').href, '_blank');
-        }, 200);
-        
-        showNotification(`Redirigiendo para cotizar: ${productName}`, 'success');
+        setTimeout(() => ripple.remove(), 500);
+        // Let the <a> navigate naturally — no preventDefault, no setTimeout
     }
 });
 
@@ -646,6 +630,66 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, 200);
     
+    // FAQ Accordion
+    document.querySelectorAll('.faq-question').forEach(button => {
+        button.addEventListener('click', () => {
+            const expanded = button.getAttribute('aria-expanded') === 'true';
+            
+            // Close all other answers
+            document.querySelectorAll('.faq-question').forEach(btn => {
+                btn.setAttribute('aria-expanded', 'false');
+                btn.nextElementSibling.classList.remove('open');
+            });
+            
+            // Toggle current
+            if (!expanded) {
+                button.setAttribute('aria-expanded', 'true');
+                button.nextElementSibling.classList.add('open');
+            }
+        });
+    });
+
+    // Stats Counter Animation
+    const statsObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const counters = entry.target.querySelectorAll('.stat-number[data-target]');
+                counters.forEach(counter => {
+                    const target = parseInt(counter.getAttribute('data-target'));
+                    const duration = 2000;
+                    const startTime = performance.now();
+                    
+                    function updateCounter(currentTime) {
+                        const elapsed = currentTime - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+                        // Ease out cubic
+                        const eased = 1 - Math.pow(1 - progress, 3);
+                        const current = Math.round(eased * target);
+                        counter.textContent = current;
+                        
+                        if (progress < 1) {
+                            requestAnimationFrame(updateCounter);
+                        }
+                    }
+                    
+                    requestAnimationFrame(updateCounter);
+                });
+                statsObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.3 });
+
+    const statsBar = document.querySelector('.stats-bar');
+    if (statsBar) {
+        statsObserver.observe(statsBar);
+    }
+
+    // Observe FAQ and stats for scroll reveal
+    document.querySelectorAll('.faq-item, .stat-item, .value-card, .service-card-detailed').forEach(el => {
+        el.classList.add('scroll-reveal');
+        observer.observe(el);
+    });
+
     console.log('🏗️ Rodrix Steel S.A.C - Website loaded successfully!');
 });
 
