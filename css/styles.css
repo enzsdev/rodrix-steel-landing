@@ -1592,23 +1592,8 @@ section {
     .whatsapp-float { animation: none; }
 }
 
-/* Taste-Skill: Fade In Up Animation Utilities */
-.scroll-reveal {
-    opacity: 0;
-    transform: translateY(40px);
-    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: opacity, transform;
-}
-
-.scroll-reveal.revealed {
-    opacity: 1;
-    transform: translateY(0);
-}
-
 /* JS Animation States */
-.hidden {
-    display: none !important;
-}
+.hidden { display: none !important; }
 
 .fade-in {
     animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -1616,27 +1601,299 @@ section {
     opacity: 0;
 }
 
-.slide-in-left {
-    animation: slideInLeft 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    opacity: 0;
-}
-
-.slide-in-right {
-    animation: slideInRight 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-    opacity: 0;
-}
-
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes slideInLeft {
-    from { opacity: 0; transform: translateX(-40px); }
-    to { opacity: 1; transform: translateX(0); }
+/* ==========================================
+   RESPONSIVE — MOBILE FIRST CORRECTIONS
+   ========================================== */
+
+/* ── Tablet: 1024px ─────────────────────── */
+@media screen and (max-width: 1024px) {
+    .hero-container {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 2rem;
+    }
+
+    .hero-image {
+        display: none; /* hide decorative image on tablet/mobile */
+    }
+
+    .hero {
+        padding: 140px 0 80px;
+    }
+
+    .hero-content h1 {
+        font-size: 2.4rem;
+    }
+
+    .separator {
+        margin: 1.5rem auto;
+    }
+
+    .hero-buttons {
+        justify-content: center;
+    }
+
+    .about-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .about-slider-container {
+        max-width: 100%;
+    }
+
+    .contact-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .quote-steps-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
 }
 
-@keyframes slideInRight {
-    from { opacity: 0; transform: translateX(40px); }
-    to { opacity: 1; transform: translateX(0); }
+/* ── Mobile: 768px ──────────────────────── */
+@media screen and (max-width: 768px) {
+    /* Nav */
+    .nav-menu {
+        position: fixed;
+        left: -100%;
+        top: 70px;
+        flex-direction: column;
+        background: rgba(22, 22, 22, 0.98);
+        width: 100%;
+        text-align: center;
+        transition: left 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        padding: 2rem 0;
+        z-index: 999;
+        gap: 0;
+    }
+
+    .nav-menu.active {
+        left: 0;
+    }
+
+    .nav-item {
+        padding: 0.8rem 0;
+    }
+
+    .nav-toggle {
+        display: flex;
+    }
+
+    /* Hero */
+    .hero {
+        padding: 120px 0 60px;
+        overflow: hidden;
+    }
+
+    .hero-container {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 1.5rem;
+        padding: 0 1rem;
+    }
+
+    .hero-image {
+        display: none;
+    }
+
+    .hero-content h1 {
+        font-size: 2rem;
+        line-height: 1.15;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+    }
+
+    .hero-badge {
+        font-size: 0.72rem;
+    }
+
+    .hero-slogan {
+        font-size: 1.2rem !important;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .hero-buttons .btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Sections general */
+    .products, .services, .about, .quote-section, .contact, .faq-section {
+        padding: 70px 0;
+    }
+
+    .section-header h2 {
+        font-size: 2rem;
+    }
+
+    .section-header p {
+        font-size: 1rem;
+    }
+
+    /* Products */
+    .products-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .product-card {
+        padding: 1.5rem 1rem;
+    }
+
+    .product-image {
+        height: 140px;
+    }
+
+    .product-info h3 {
+        font-size: 1rem;
+    }
+
+    .category-btn {
+        padding: 8px 14px;
+        font-size: 0.78rem;
+    }
+
+    /* Services */
+    .services-grid {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+    }
+
+    /* Quote steps */
+    .quote-steps-grid {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+    }
+
+    .quote-step-card {
+        padding: 2rem 1.5rem;
+    }
+
+    /* Stats */
+    .stats-bar {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        padding: 2rem 1.5rem;
+    }
+
+    .stat-number, .stat-number-text {
+        font-size: 2.2rem;
+    }
+
+    /* About */
+    .about-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .about-values {
+        gap: 1rem;
+    }
+
+    /* Brands */
+    .brands-section {
+        margin: 1rem 0 0 0;
+    }
+
+    .brands-section h3 {
+        font-size: 1.3rem;
+        margin-bottom: 2rem;
+        padding: 0 1rem;
+    }
+
+    .brand-item img {
+        width: 80px;
+        height: 80px;
+    }
+
+    /* Contact */
+    .contact-content {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .contact-info {
+        gap: 1.5rem;
+    }
+
+    .location-section {
+        padding: 1.5rem 1.2rem;
+    }
+
+    .map-section iframe {
+        height: 250px;
+    }
+
+    /* FAQ */
+    .faq-grid {
+        max-width: 100%;
+        padding: 0 0.5rem;
+    }
+
+    .faq-question {
+        font-size: 0.9rem;
+        padding: 1rem 1.2rem;
+    }
+
+    /* Footer */
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        text-align: center;
+    }
+
+    .footer-section ul {
+        text-align: left;
+    }
+
+    .footer-bottom p {
+        font-size: 0.8rem;
+    }
 }
+
+/* ── Small Mobile: 480px ────────────────── */
+@media screen and (max-width: 480px) {
+    .hero-content h1 {
+        font-size: 1.7rem;
+    }
+
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-bar {
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .stat-number, .stat-number-text {
+        font-size: 1.8rem;
+    }
+
+    .btn-large {
+        padding: 14px 24px;
+        font-size: 1rem;
+    }
+
+    .container {
+        padding: 0 15px;
+    }
+}
+
