@@ -46,30 +46,26 @@ categoryButtons.forEach(button => {
 function filterProducts(category) {
     const products = document.querySelectorAll('.product-card');
     let visibleIndex = 0;
-    
+
     products.forEach((product) => {
         const productCategory = product.getAttribute('data-category');
-        
-        // Reset classes first
-        product.classList.remove('hidden', 'fade-in');
-        
+
         if (category === 'all' || productCategory === category) {
-            // Show the product with staggered animation
             product.style.display = 'block';
-            product.style.setProperty('--stagger-delay', `${visibleIndex * 80}ms`);
-            // Force reflow before adding animation class
-            void product.offsetWidth;
-            setTimeout(() => {
-                product.classList.add('fade-in');
-            }, 10);
+            const delay = visibleIndex * 0.06;
+            if (typeof gsap !== 'undefined') {
+                gsap.fromTo(product,
+                    { opacity: 0, y: 20 },
+                    { opacity: 1, y: 0, duration: 0.45, delay, ease: 'power2.out' }
+                );
+            } else {
+                product.style.opacity = '1';
+            }
             visibleIndex++;
         } else {
-            // Hide the product
             product.style.display = 'none';
         }
     });
-    
-    console.log(`Filtered by category: ${category}, visible products: ${visibleIndex}`);
 }
 
 // Smooth scrolling mejorado con easing personalizado
@@ -155,61 +151,44 @@ window.addEventListener('scroll', () => {
     }
 });
 
-// Brands Carousel Enhanced Interaction
-if (brandsCarousel) {
-    let isDragging = false;
-    let startPos = 0;
-    let currentTranslate = 0;
-    let prevTranslate = 0;
-    let animationSpeed = 1;
+// Brands Carousel — JS-driven marquee (RAF-based, no CSS animation conflicts)
+(function initBrandsCarousel() {
+    const carousel = document.getElementById('brands-carousel');
+    if (!carousel) return;
 
-    // Mouse events for carousel
-    brandsCarousel.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        startPos = e.clientX;
-        brandsCarousel.style.cursor = 'grabbing';
-        brandsCarousel.style.animationPlayState = 'paused';
-        e.preventDefault();
-    });
+    const container = carousel.parentElement;
+    // Ensure container clips overflow
+    container.style.overflow = 'hidden';
+    container.style.position = 'relative';
 
-    brandsCarousel.addEventListener('mousemove', (e) => {
-        if (isDragging) {
-            const currentPosition = e.clientX;
-            currentTranslate = prevTranslate + (currentPosition - startPos) * 0.5;
-            brandsCarousel.style.transform = `translateX(${currentTranslate}px)`;
+    let position = 0;
+    const speed = 0.6; // px per frame
+    let paused = false;
+    let rafId = null;
+
+    function getHalfWidth() {
+        return carousel.scrollWidth / 2;
+    }
+
+    function tick() {
+        if (!paused) {
+            position -= speed;
+            const half = getHalfWidth();
+            if (Math.abs(position) >= half) {
+                position = 0; // seamless loop: jump back to start
+            }
+            carousel.style.transform = `translateX(${position}px)`;
         }
-    });
+        rafId = requestAnimationFrame(tick);
+    }
 
-    brandsCarousel.addEventListener('mouseup', () => {
-        if (isDragging) {
-            isDragging = false;
-            brandsCarousel.style.cursor = 'grab';
-            prevTranslate = currentTranslate;
-            brandsCarousel.style.animationPlayState = 'running';
-        }
-    });
+    // Pause on hover
+    carousel.addEventListener('mouseenter', () => { paused = true; });
+    carousel.addEventListener('mouseleave', () => { paused = false; });
 
-    brandsCarousel.addEventListener('mouseleave', () => {
-        if (isDragging) {
-            isDragging = false;
-            brandsCarousel.style.cursor = 'grab';
-            brandsCarousel.style.animationPlayState = 'running';
-        }
-    });
-
-    // Pause animation on hover
-    brandsCarousel.addEventListener('mouseenter', () => {
-        if (!isDragging) {
-            brandsCarousel.style.animationPlayState = 'paused';
-        }
-    });
-
-    brandsCarousel.addEventListener('mouseleave', () => {
-        if (!isDragging) {
-            brandsCarousel.style.animationPlayState = 'running';
-        }
-    });
-}
+    // Start after a short delay so the section is visible
+    setTimeout(() => { rafId = requestAnimationFrame(tick); }, 800);
+}());
 
 // WhatsApp Enhanced Functionality
 function enhanceWhatsAppLinks() {
@@ -422,33 +401,192 @@ function validateEmail(email) {
     return emailRegex.test(email);
 }
 
-// Page Load Animations
+// Page Load + GSAP Animations
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize animations
-    setTimeout(() => {
-        document.body.classList.add('loaded');
-    }, 100);
-
-    // Observe elements for animation
-    document.querySelectorAll('.product-card, .service-card, .hero-content, .hero-image, .about-text, .about-image, .section-header, .scroll-reveal, .quote-image, .contact-content, .brands-section, .location-section, .features').forEach((element, index) => {
-        // Set initial state for scroll-reveal items
-        if (!element.classList.contains('hero-content') && !element.classList.contains('hero-image')) {
-            element.classList.add('scroll-reveal');
-        }
-        observer.observe(element);
-    });
-
-    // Enhance WhatsApp links
-    enhanceWhatsAppLinks();
-
     // Smooth page load fade
     document.body.style.opacity = '0';
-    document.body.style.transition = 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
-    
+    document.body.style.transition = 'opacity 0.5s ease';
     window.addEventListener('load', () => {
         document.body.style.opacity = '1';
+        setTimeout(() => { document.body.classList.add('loaded'); }, 100);
     });
+
+    enhanceWhatsAppLinks();
+
+    // Guard: GSAP might not be loaded yet (CDN delay), wait for it
+    function initGSAP() {
+        if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+            setTimeout(initGSAP, 100);
+            return;
+        }
+
+        // Register ScrollTrigger plugin
+        gsap.registerPlugin(ScrollTrigger);
+
+        // ── HERO SECTION ──────────────────────────────────────────
+        gsap.from('.hero-content', {
+            x: -70,
+            opacity: 0,
+            duration: 1.1,
+            ease: 'power4.out',
+            delay: 0.2
+        });
+        gsap.from('.hero-image', {
+            x: 70,
+            opacity: 0,
+            duration: 1.1,
+            ease: 'power4.out',
+            delay: 0.4
+        });
+
+        // ── SECTION HEADERS ───────────────────────────────────────
+        gsap.utils.toArray('.section-header').forEach(el => {
+            gsap.from(el, {
+                scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' },
+                y: 50,
+                opacity: 0,
+                duration: 0.9,
+                ease: 'power3.out'
+            });
+        });
+
+        // ── PRODUCT CARDS (visible on page load — no ScrollTrigger) ─────
+        // These are immediately visible; animate them in with delay after page fade
+        window.addEventListener('load', () => {
+            const cards = document.querySelectorAll('.product-card');
+            gsap.from(cards, {
+                y: 50,
+                opacity: 0,
+                duration: 0.65,
+                stagger: { amount: 0.7, from: 'start' },
+                delay: 0.5,           // let the page fade-in complete first
+                ease: 'power3.out',
+                clearProps: 'all'     // remove inline styles after animation
+            });
+        });
+
+        // ── SERVICE CARDS (alternating left/right) ───────────────
+        gsap.utils.toArray('.service-card-detailed').forEach((card, i) => {
+            gsap.from(card, {
+                scrollTrigger: { trigger: card, start: 'top bottom', toggleActions: 'play none none none' },
+                x: i % 2 === 0 ? -60 : 60,
+                opacity: 0,
+                duration: 0.8,
+                delay: i * 0.1,
+                ease: 'power3.out',
+                immediateRender: false
+            });
+        });
+
+        // ── QUOTE STEPS ───────────────────────────────────────────
+        // Safety: ensure cards are visible first (GSAP will animate from this)
+        gsap.set('.quote-step-card, .quote-cta', { opacity: 1, y: 0, scale: 1, clearProps: 'all' });
+
+        // Animate as a group when parent section enters viewport
+        const quoteSection = document.querySelector('.quote-section');
+        if (quoteSection) {
+            ScrollTrigger.create({
+                trigger: quoteSection,
+                start: 'top 90%',
+                onEnter: () => {
+                    gsap.fromTo('.quote-step-card',
+                        { opacity: 0, y: 50, scale: 0.95 },
+                        { opacity: 1, y: 0, scale: 1, duration: 0.7, stagger: 0.18, ease: 'back.out(1.3)' }
+                    );
+                    gsap.fromTo('.quote-cta',
+                        { opacity: 0, y: 25 },
+                        { opacity: 1, y: 0, duration: 0.6, delay: 0.55, ease: 'power2.out' }
+                    );
+                },
+                once: true
+            });
+        }
+
+        // ── STATS BAR ─────────────────────────────────────────────
+        gsap.from('.stat-item', {
+            scrollTrigger: { trigger: '.stats-bar', start: 'top bottom', toggleActions: 'play none none none' },
+            y: 40,
+            opacity: 0,
+            duration: 0.6,
+            stagger: 0.12,
+            ease: 'power3.out',
+            immediateRender: false
+        });
+
+        // ── ABOUT SECTION ─────────────────────────────────────────
+        gsap.from('.about-text', {
+            scrollTrigger: { trigger: '.about-content', start: 'top bottom', toggleActions: 'play none none none' },
+            x: -60,
+            opacity: 0,
+            duration: 1,
+            ease: 'power3.out',
+            immediateRender: false
+        });
+        gsap.from('.about-slider-container', {
+            scrollTrigger: { trigger: '.about-content', start: 'top bottom', toggleActions: 'play none none none' },
+            x: 60,
+            opacity: 0,
+            duration: 1,
+            delay: 0.15,
+            ease: 'power3.out',
+            immediateRender: false
+        });
+
+        // ── VALUE CARDS ───────────────────────────────────────────
+        gsap.from('.value-card', {
+            scrollTrigger: { trigger: '.about-values', start: 'top bottom', toggleActions: 'play none none none' },
+            y: 35,
+            opacity: 0,
+            duration: 0.6,
+            stagger: 0.15,
+            ease: 'power2.out',
+            immediateRender: false
+        });
+
+        // ── BRANDS SECTION ────────────────────────────────────────
+        gsap.from('.brands-section', {
+            scrollTrigger: { trigger: '.brands-section', start: 'top bottom', toggleActions: 'play none none none' },
+            opacity: 0,
+            duration: 1,
+            ease: 'power2.out',
+            immediateRender: false
+        });
+
+        // ── CONTACT INFO ──────────────────────────────────────────
+        gsap.from('.location-section', {
+            scrollTrigger: { trigger: '.contact-info', start: 'top bottom', toggleActions: 'play none none none' },
+            y: 50,
+            opacity: 0,
+            duration: 0.7,
+            stagger: 0.2,
+            ease: 'power3.out',
+            immediateRender: false
+        });
+        gsap.from('.map-section', {
+            scrollTrigger: { trigger: '.contact-content', start: 'top bottom', toggleActions: 'play none none none' },
+            x: 60,
+            opacity: 0,
+            duration: 0.9,
+            delay: 0.15,
+            ease: 'power3.out'
+        });
+
+        // ── FAQ ITEMS ─────────────────────────────────────────────
+        gsap.from('.faq-item', {
+            scrollTrigger: { trigger: '.faq-grid', start: 'top 85%', toggleActions: 'play none none none' },
+            y: 30,
+            opacity: 0,
+            duration: 0.55,
+            stagger: 0.1,
+            ease: 'power2.out'
+        });
+
+        console.log('✨ GSAP animations initialized');
+    }
+
+    initGSAP();
 });
+
 
 // Enhanced Scroll Tracking
 let ticking = false;
@@ -475,27 +613,8 @@ function requestTick() {
 
 window.addEventListener('scroll', requestTick);
 
-// Brands Carousel Touch Support
-if (brandsCarousel) {
-    let startTouchX = 0;
-    let currentX = 0;
-    
-    brandsCarousel.addEventListener('touchstart', (e) => {
-        startTouchX = e.touches[0].clientX;
-        brandsCarousel.style.animationPlayState = 'paused';
-    }, { passive: true });
-    
-    brandsCarousel.addEventListener('touchmove', (e) => {
-        currentX = e.touches[0].clientX;
-        const diff = currentX - startTouchX;
-        brandsCarousel.style.transform = `translateX(${diff * 0.5}px)`;
-    }, { passive: true });
-    
-    brandsCarousel.addEventListener('touchend', () => {
-        brandsCarousel.style.animationPlayState = 'running';
-        brandsCarousel.style.transform = 'translateX(0)';
-    });
-}
+// Brands Carousel Touch Support removed to prevent transform override
+
 
 // Product Search Functionality (Enhanced)
 function searchProducts(searchTerm) {
@@ -700,6 +819,25 @@ if ('serviceWorker' in navigator) {
         console.log('Service Worker support detected');
     });
 }
+
+// About Us Image Slider
+function initAboutSlider() {
+    const slides = document.querySelectorAll('.about-slide');
+    if (slides.length === 0) return;
+    
+    let currentSlide = 0;
+    
+    setInterval(() => {
+        slides[currentSlide].classList.remove('active');
+        currentSlide = (currentSlide + 1) % slides.length;
+        slides[currentSlide].classList.add('active');
+    }, 4000); // Change image every 4 seconds
+}
+
+// Initialize slider
+document.addEventListener('DOMContentLoaded', () => {
+    initAboutSlider();
+});
 
 // Export functions for testing
 window.RodrixSteel = {
