@@ -17,23 +17,24 @@ html {
 
 :root {
     /* Premium Palette: Obsidian, Pearl, Crimson & Sand */
-    --crimson-depth: #710014;
+    --crimson-depth: #ff0035;
     --warm-sand: #B38F6F;
     --soft-pearl: #F2F1ED;
     --obsidian-black: #161616;
 
     /* Functional Mappings */
     --primary-color: var(--crimson-depth);
-    --primary-dark: #50000E;
+    --primary-dark: #80001a;
+    /* Darker red for stronger contrast in alternating sections */
     --secondary-color: var(--warm-sand);
 
     /* Backgrounds & Surfaces */
-    --quaternary-color: var(--soft-pearl);
-    /* Main Background */
-    --tertiary-color: #ffffff;
-    /* Alternating sections (White) */
+    --quaternary-color: var(--primary-color);
+    /* Main Background: Red */
+    --tertiary-color: var(--primary-dark);
+    /* Alternating sections: Dark Red */
     --quinary-color: #ffffff;
-    /* Cards surface */
+    /* Cards surface: White */
     --bg-light: #ffffff;
 
     /* Typography Colors */
@@ -72,7 +73,7 @@ a {
 body {
     font-family: 'Inter', sans-serif;
     line-height: 1.6;
-    color: var(--text-dark);
+    color: var(--white);
     background-color: var(--quaternary-color);
     overflow-x: hidden;
 }
@@ -268,8 +269,8 @@ h6 {
 
 /* Hero Section */
 .hero {
-    background: var(--quaternary-color);
-    color: var(--text-dark);
+    background: var(--primary-color);
+    color: var(--white);
     padding: 160px 0 100px;
     margin-top: 80px;
     position: relative;
@@ -279,11 +280,9 @@ h6 {
 .hero-badge {
     display: inline-block;
     padding: 8px 16px;
-    background: rgba(113, 0, 20, 0.08);
-    /* Crimson bg */
-    color: var(--primary-color);
-    /* Crimson text */
-    border: 1px solid rgba(113, 0, 20, 0.15);
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--white);
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 50px;
     font-size: 0.85rem;
     font-weight: 600;
@@ -314,7 +313,7 @@ h6 {
 .separator {
     width: 80px;
     height: 4px;
-    background: var(--primary-color);
+    background: var(--white);
     margin: 1.5rem 0;
 }
 
@@ -370,15 +369,15 @@ h6 {
 
 .btn-secondary {
     background: transparent;
-    color: var(--text-dark);
-    border-color: var(--text-dark);
+    color: var(--white);
+    border-color: var(--white);
 }
 
 .btn-secondary:hover {
-    background: var(--text-dark);
-    color: var(--text-inverse);
+    background: var(--white);
+    color: var(--primary-color);
     transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 10px 25px rgba(22, 22, 22, 0.15);
+    box-shadow: 0 10px 25px rgba(255, 255, 255, 0.15);
 }
 
 .btn-cart {
@@ -396,10 +395,9 @@ h6 {
 
 .hero-image {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     align-items: center;
-    padding-left: 2rem;
-    margin-right: -16rem;
+    margin-right: 0;
 }
 
 .hero-img {
@@ -409,7 +407,7 @@ h6 {
     filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.2));
     animation: heroFloat 4s ease-in-out infinite;
     transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1),
-                filter 0.4s ease;
+        filter 0.4s ease;
     cursor: pointer;
 }
 
@@ -440,7 +438,7 @@ h6 {
 .section-header h2 {
     font-size: 2.8rem;
     font-weight: 800;
-    color: var(--text-dark);
+    color: var(--white);
     margin-bottom: 1rem;
     text-transform: uppercase;
     letter-spacing: -1px;
@@ -448,13 +446,13 @@ h6 {
 
 .section-header p {
     font-size: 1.2rem;
-    color: var(--text-light);
+    color: rgba(255, 255, 255, 0.85);
     font-weight: 500;
 }
 
 /* Products Section */
 .products {
-    padding: 120px 0;
+    padding: 80px 0;
     background: var(--quaternary-color);
 }
 
@@ -469,10 +467,9 @@ h6 {
 
 .category-btn {
     padding: 12px 24px;
-    background: var(--tertiary-color);
-    color: var(--text-dark);
-    border: 1px solid rgba(22, 22, 22, 0.1);
-    /* Obsidian border */
+    background: var(--white);
+    color: var(--primary-color);
+    border: 2px solid transparent;
     border-radius: 50px;
     cursor: pointer;
     transition: transform 0.35s var(--ease-out-back),
@@ -488,14 +485,11 @@ h6 {
 
 .category-btn.active,
 .category-btn:hover {
-    background: var(--primary-color);
-    /* Crimson Depth */
-    color: var(--text-inverse);
-    /* Soft Pearl */
-    border-color: var(--primary-color);
+    background: var(--primary-dark);
+    color: var(--white);
+    border-color: rgba(255, 255, 255, 0.5);
     transform: translateY(-3px);
-    box-shadow: 0 6px 18px rgba(113, 0, 20, 0.3);
-    /* Crimson glow */
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
 }
 
 .products-grid {
@@ -519,7 +513,6 @@ h6 {
 .product-card {
     background: var(--quinary-color);
     border: 1px solid rgba(22, 22, 22, 0.05);
-    /* Obsidian border */
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
     padding: 2.5rem 2rem;
@@ -529,6 +522,9 @@ h6 {
         border-color 0.5s ease;
     overflow: hidden;
     will-change: transform;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .product-card:hover {
@@ -586,6 +582,12 @@ h6 {
     transition: all 0.4s ease;
 }
 
+.product-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
 .product-info h3 {
     font-size: 1.4rem;
     color: var(--text-dark);
@@ -598,21 +600,32 @@ h6 {
     margin-bottom: 1.5rem;
     font-size: 1rem;
     line-height: 1.5;
+    flex-grow: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 3rem;
+}
+
+.product-info .btn-cart {
+    margin-top: auto;
 }
 
 /* Services Section */
 .services {
-    padding: 120px 0;
-    background: var(--tertiary-color);
-    color: var(--text-dark);
+    padding: 80px 0;
+    background: var(--quaternary-color);
+    color: var(--white);
 }
 
 .services .section-header h2 {
-    color: var(--text-dark);
+    color: var(--white);
 }
 
 .services .section-header p {
-    color: var(--text-light);
+    color: rgba(255, 255, 255, 0.85);
 }
 
 .services-grid {
@@ -623,10 +636,8 @@ h6 {
 }
 
 .service-card {
-    background: var(--primary-color);
-    /* Crimson Depth */
-    border: 1px solid rgba(179, 143, 111, 0.15);
-    /* Warm Sand sutil */
+    background: var(--quinary-color);
+    border: 1px solid rgba(22, 22, 22, 0.05);
     border-radius: var(--border-radius);
     padding: 2rem;
     text-align: center;
@@ -639,13 +650,9 @@ h6 {
 }
 
 .service-card:hover {
-    background: var(--primary-dark);
-    /* Crimson oscuro */
     transform: translateY(-8px) scale(1.01);
-    border-color: rgba(179, 143, 111, 0.35);
-    /* Warm Sand */
-    box-shadow: 0 15px 35px rgba(113, 0, 20, 0.2);
-    /* Sombra crimson */
+    border-color: rgba(113, 0, 20, 0.15);
+    box-shadow: var(--shadow-strong);
 }
 
 .service-image {
@@ -661,7 +668,7 @@ h6 {
 
 /* Quote Section */
 .quote-section {
-    padding: 120px 0;
+    padding: 80px 0;
     background: var(--quaternary-color);
 }
 
@@ -758,8 +765,8 @@ h6 {
 
 /* About Section */
 .about {
-    padding: 120px 0 60px;
-    background: var(--tertiary-color);
+    padding: 80px 0 60px;
+    background: var(--quaternary-color);
 }
 
 .about-content {
@@ -773,14 +780,14 @@ h6 {
 .about-text h3 {
     font-size: 2.2rem;
     font-weight: 800;
-    color: var(--text-dark);
+    color: var(--white);
     margin-bottom: 1.5rem;
     letter-spacing: -0.5px;
 }
 
 .about-text p {
     font-size: 1.1rem;
-    color: var(--text-light);
+    color: rgba(255, 255, 255, 0.85);
     margin-bottom: 2.5rem;
     line-height: 1.7;
 }
@@ -798,13 +805,13 @@ h6 {
 }
 
 .feature i {
-    color: var(--primary-color);
+    color: var(--text-dark);
     font-size: 1.3rem;
 }
 
 .feature span {
     font-weight: 600;
-    color: var(--text-dark);
+    color: var(--white);
 }
 
 .about-slider-container {
@@ -857,8 +864,7 @@ h6 {
 .brands-section h3 {
     font-size: 1.8rem;
     font-weight: 700;
-    color: var(--primary-color);
-    /* Crimson Depth */
+    color: var(--white);
     margin-bottom: 3rem;
     text-transform: uppercase;
 }
@@ -867,6 +873,10 @@ h6 {
     overflow: hidden;
     width: 100%;
     position: relative;
+    background: var(--bg-light);
+    padding: 1rem 0;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
 }
 
 .brands-carousel {
@@ -883,8 +893,8 @@ h6 {
 }
 
 .brand-item img {
-    width: 120px;
-    height: 120px;
+    width: 100px;
+    height: 70px;
     object-fit: contain;
     filter: grayscale(100%);
     transition: filter 0.5s cubic-bezier(0.4, 0, 0.2, 1),
@@ -900,8 +910,8 @@ h6 {
 
 /* Contact Section */
 .contact {
-    padding: 100px 0;
-    background: var(--white);
+    padding: 80px 0;
+    background: var(--quaternary-color);
 }
 
 .contact-content {
@@ -1111,7 +1121,7 @@ h6 {
     justify-content: center;
     width: 45px;
     height: 45px;
-    background: var(--primary-color);
+    background: var(--primary-dark);
     color: var(--white);
     text-decoration: none;
     border-radius: 50%;
@@ -1122,7 +1132,7 @@ h6 {
 }
 
 .social-links a:hover {
-    background: var(--secondary-color);
+    /*background: var(--secondary-color);*/
     transform: translateY(-5px) scale(1.1);
     box-shadow: 0 10px 25px rgba(215, 43, 50, 0.35);
 }
@@ -1426,7 +1436,7 @@ section {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 2rem;
-    background: var(--quaternary-color);
+    background: var(--tertiary-color);
     border-radius: 16px;
     padding: 3rem 2rem;
     margin-bottom: 4rem;
@@ -1445,7 +1455,7 @@ section {
 .stat-number-text {
     font-size: 3rem;
     font-weight: 900;
-    color: var(--primary-color);
+    color: var(--white);
     line-height: 1;
 }
 
@@ -1457,7 +1467,7 @@ section {
 .stat-label {
     font-size: 0.9rem;
     font-weight: 600;
-    color: var(--silver-light);
+    color: rgba(255, 255, 255, 0.85);
     text-transform: uppercase;
     letter-spacing: 1px;
 }
@@ -1472,27 +1482,25 @@ section {
     width: 70px;
     height: 70px;
     border-radius: 50%;
-    background: rgba(242, 241, 237, 0.1);
+    background: rgba(113, 0, 20, 0.05);
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 1.5rem;
     font-size: 1.6rem;
-    color: var(--secondary-color);
-    /* Warm Sand */
-    border: 2px solid rgba(179, 143, 111, 0.3);
+    color: var(--primary-color);
+    border: 2px solid rgba(113, 0, 20, 0.1);
     transition: transform 0.4s var(--ease-out-back),
         background 0.3s ease;
 }
 
 .service-card-detailed:hover .service-icon {
     transform: scale(1.1) rotate(5deg);
-    background: rgba(242, 241, 237, 0.2);
+    background: rgba(113, 0, 20, 0.1);
 }
 
 .service-card-detailed h3 {
-    color: var(--text-inverse);
-    /* Soft Pearl */
+    color: var(--text-dark);
     font-size: 1.3rem;
     font-weight: 700;
     margin-bottom: 1rem;
@@ -1500,7 +1508,7 @@ section {
 }
 
 .service-card-detailed p {
-    color: rgba(242, 241, 237, 0.85);
+    color: var(--text-dark);
     /* Soft Pearl muted */
     font-size: 0.95rem;
     line-height: 1.6;
@@ -1555,8 +1563,8 @@ section {
 
 /* FAQ Section */
 .faq-section {
-    padding: 100px 0;
-    background: var(--white);
+    padding: 80px 0;
+    background: var(--quaternary-color);
 }
 
 .faq-grid {
@@ -1568,15 +1576,15 @@ section {
 }
 
 .faq-item {
-    border: 2px solid var(--primary-color);
+    background: var(--bg-light);
+    border: 1px solid rgba(22, 22, 22, 0.05);
     border-radius: var(--border-radius);
     overflow: hidden;
-    transition: border-color 0.3s ease,
-        box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease;
 }
 
 .faq-item:hover {
-    box-shadow: 0 4px 15px rgba(113, 0, 20, 0.15);
+    box-shadow: var(--shadow-strong);
 }
 
 .faq-question {
@@ -2041,7 +2049,8 @@ section {
     }
 
     .products-grid {
-        grid-template-columns: 1fr; /* Fuerza 1 columna en pantallas muy pequeñas */
+        grid-template-columns: 1fr;
+        /* Fuerza 1 columna en pantallas muy pequeñas */
     }
 
     .stats-bar {
@@ -2062,4 +2071,4 @@ section {
     .container {
         padding: 0 15px;
     }
-}
+}

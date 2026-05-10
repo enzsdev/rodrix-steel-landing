@@ -1,3 +1,5 @@
+import '../css/main.css';
+
 // DOM Elements
 const mobileMenu = document.getElementById('mobile-menu');
 const navMenu = document.getElementById('nav-menu');
