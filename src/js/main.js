@@ -405,13 +405,9 @@ function validateEmail(email) {
 
 // Page Load + GSAP Animations
 document.addEventListener('DOMContentLoaded', () => {
-    // Smooth page load fade
-    document.body.style.opacity = '0';
-    document.body.style.transition = 'opacity 0.5s ease';
-    window.addEventListener('load', () => {
-        document.body.style.opacity = '1';
-        setTimeout(() => { document.body.classList.add('loaded'); }, 100);
-    });
+    // We remove the whole-body opacity 0 to prevent the screen from staying red
+    // while waiting for slow assets to load. GSAP will handle individual elements.
+    document.body.classList.add('loaded');
 
     enhanceWhatsAppLinks();
 
@@ -453,18 +449,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // ── PRODUCT CARDS (visible on page load — no ScrollTrigger) ─────
-        // These are immediately visible; animate them in with delay after page fade
-        window.addEventListener('load', () => {
-            const cards = document.querySelectorAll('.product-card');
-            gsap.from(cards, {
-                y: 50,
-                opacity: 0,
-                duration: 0.65,
-                stagger: { amount: 0.7, from: 'start' },
-                delay: 0.5,           // let the page fade-in complete first
-                ease: 'power3.out',
-                clearProps: 'all'     // remove inline styles after animation
-            });
+        // These are immediately visible; animate them in with delay
+        const cards = document.querySelectorAll('.product-card');
+        gsap.from(cards, {
+            y: 50,
+            opacity: 0,
+            duration: 0.65,
+            stagger: { amount: 0.7, from: 'start' },
+            delay: 0.5,           // delay for sequential entrance
+            ease: 'power3.out',
+            clearProps: 'all'     // remove inline styles after animation
         });
 
         // ── SERVICE CARDS (alternating left/right) ───────────────
